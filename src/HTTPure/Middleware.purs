@@ -121,13 +121,14 @@ developmentLogFormat' ::
   HTTPure.Request ->
   HTTPure.Response ->
   Effect.Aff.Aff String
-developmentLogFormat' logTime request response =
+developmentLogFormat' logTime request response = do
+  body' <- body
   pure
     ( Data.String.joinWith
         "\n"
         ( method
           <> object "Query" request.query
-          <> body
+          <> body'
           <> fromHeaders "Headers" headers
           <> duration
           <> status response.status
@@ -135,8 +136,10 @@ developmentLogFormat' logTime request response =
     )
   where
   body
-    | hasBody request.method = ["  " <> white "Body" <> ": " <> request.body]
-    | otherwise = []
+    | hasBody request.method = do
+        string <- HTTPure.toString request.body
+        pure ["  " <> white "Body" <> ": " <> string]
+    | otherwise = pure []
   duration =
     ["  " <> white "Duration" <> ": " <> renderDuration logTime.duration]
   fromHeaders name obj
