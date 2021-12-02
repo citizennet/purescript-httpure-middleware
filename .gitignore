@@ -1,6 +1,8 @@
 ### Project-specific ###
 
 .psc-ide-port
+.purs-repl
+.spago
 
 ################################################################################
 # DO NOT CHANGE ANYTHING BELOW THIS SECTION BY HAND.
